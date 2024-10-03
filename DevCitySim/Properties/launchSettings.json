@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DevCitySim (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DevCitySim (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

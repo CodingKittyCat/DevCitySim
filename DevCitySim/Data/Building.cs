@@ -12,7 +12,6 @@ namespace DevCitySim.Data
         public string Name {  get; set; }
         public string Type { get; set; }
         public string Location { get; set; }
-        public int CitizenId { get; set; }
-        public Citizen Citizen { get; set; }
+        public ICollection<CitizenBuilding> CitizenBuildings { get; set;  }
     }
 }

@@ -40,22 +40,38 @@ namespace DevCitySim
             using (var db = new AppDbContext())
             {
                 var citizen = db.Citizens
-                    .Include(c => c.Buildings)
-                    .FirstOrDefault(c => c.Id == citizenId);
-
+                            .Include(c => c.CitizenBuildings)
+                            .ThenInclude(cb => cb.Building)
+                            .FirstOrDefault(c => c.Id == citizenId);
 
                     citizenName.Text = citizen.Name;
                     citizenJob.Text = $"Profession: {citizen.Job}";
 
                     buildingList.Children.Clear();
-                    foreach (var building in citizen.Buildings)
+                    foreach (var citizenBuilding in citizen.CitizenBuildings)
                     {
-                        TextBlock buildingText = new TextBlock
-                        {
-                            Text = $"{building.Name} - {building.Type} located at {building.Location}"
-                        };
-                        buildingList.Children.Add(buildingText);
+                    var building = citizenBuilding.Building;
+                    var button = new Button
+                    {
+                        Content = $"{building.Name} - {building.Type} at {building.Location}",
+                        Tag = building.Id
+                    };
+                    button.Click += (s, e) => OpenBuildingDetailWindow((int)button.Tag);
+                        buildingList.Children.Add(button);
                     }
+            }
+        }
+
+        private void OpenBuildingDetailWindow(int buildingId)
+        {
+            using (var db = new AppDbContext())
+            {
+                var building = db.Buildings
+                    .Include(b => b.CitizenBuildings)
+                    .ThenInclude(cb => cb.Citizen)
+                    .FirstOrDefault(b => b.Id == buildingId);
+                var buildingDetailWindow = new BuildingDetailWindow(buildingId);
+                buildingDetailWindow.Activate();
             }
         }
     }

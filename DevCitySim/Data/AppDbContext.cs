@@ -11,6 +11,7 @@ namespace DevCitySim.Data
     {
         public DbSet<Citizen> Citizens {get; set;}
         public DbSet<Building> Buildings {get; set;}
+        public DbSet<CitizenBuilding> CitizenBuildings {get; set;}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -23,10 +24,19 @@ namespace DevCitySim.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Citizen>()
-              .HasMany(c => c.Buildings)
-              .WithOne(b => b.Citizen)
-              .HasForeignKey(b => b.CitizenId);
+            modelBuilder.Entity<CitizenBuilding>()
+           .HasKey(cb => new { cb.CitizenId, cb.BuildingId });
+
+            modelBuilder.Entity<CitizenBuilding>()
+                .HasOne(cb => cb.Citizen)
+                .WithMany(c => c.CitizenBuildings)
+                .HasForeignKey(cb => cb.CitizenId);
+
+            modelBuilder.Entity<CitizenBuilding>()
+                .HasOne(cb => cb.Building)
+                .WithMany(b => b.CitizenBuildings)
+                .HasForeignKey(cb => cb.BuildingId);
+
 
             modelBuilder.Entity<Citizen>().HasData(
                 new Citizen
@@ -196,7 +206,7 @@ namespace DevCitySim.Data
                     Name = "DevCityTech",
                     Type = "Office",
                     Location = "Nullstreet 13",
-                    CitizenId = 1,
+                  
                 },
 
                  new Building
@@ -205,7 +215,7 @@ namespace DevCitySim.Data
                     Name = "Stargazer Offices",
                     Type = "Office",
                     Location = "Blustreet 1304",
-                    CitizenId = 1,
+                    
                 },
 
                 new Building
@@ -214,7 +224,7 @@ namespace DevCitySim.Data
                     Name = "Memory Islands",
                     Type = "Cafe",
                     Location = "Destinystreet",
-                    CitizenId = 1,
+                 
                 },
 
                 new Building
@@ -223,7 +233,7 @@ namespace DevCitySim.Data
                     Name = "July Care",
                     Type = "Daycare",
                     Location = "Blustreet 1306",
-                    CitizenId = 2,
+              
                 },
 
                 new Building
@@ -232,7 +242,7 @@ namespace DevCitySim.Data
                     Name = "August Goodbyeport",
                     Type = "Airport",
                     Location = "Airlines 1214",
-                    CitizenId = 2,
+                 
                 },
 
                 new Building
@@ -241,11 +251,34 @@ namespace DevCitySim.Data
                     Name = "October Festivities",
                     Type = "House Party",
                     Location = "Airplanestreet 1710",
-                    CitizenId = 2,
+                
                 }
 
-
+                
             );
+            modelBuilder.Entity<CitizenBuilding>().HasData(
+                new CitizenBuilding
+                {
+                    Id = 1,
+                    CitizenId = 1,
+                    BuildingId = 2,
+                },
+
+                new CitizenBuilding
+                {
+                    Id = 1,
+                    CitizenId = 2,
+                    BuildingId = 2,
+                },
+
+                new CitizenBuilding
+                {
+                    Id = 1,
+                    CitizenId = 3,
+                    BuildingId = 2,
+                }
+
+                );
         }
     }
 }

@@ -30,11 +30,11 @@ namespace DevCitySim
         public MainWindow()
         {
             this.InitializeComponent();
-            using (var db = new AppDbContext())
-            {
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
-            }
+            //using (var db = new AppDbContext())
+            //{
+            //    db.Database.EnsureDeleted();
+            //    db.Database.EnsureCreated();
+            //}
 
             LoadCitizens();
         }
@@ -79,11 +79,10 @@ namespace DevCitySim
         {
             using (var db = new AppDbContext()) 
             {
-                var citizen = db.Citizens.FirstOrDefault(c => c.Id == citizenId);
-
-                db.Entry(citizen)
-                    .Collection(c => c.Buildings)
-                    .Load();
+                var citizen = db.Citizens
+                    .Include(c => c.CitizenBuildings)
+                    .ThenInclude(cb => cb.Building)
+                    .FirstOrDefault(c  => c.Id == citizenId);
 
                 var detailWindow = new BuildingCitizenView(citizenId);
                 detailWindow.Activate();

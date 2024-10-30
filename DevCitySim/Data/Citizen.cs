@@ -14,6 +14,6 @@ namespace DevCitySim.Data
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Job {  get; set; }
-        public ICollection<Building> Buildings { get; set; }
+        public ICollection<CitizenBuilding> CitizenBuildings { get; set; }
     }
 }
